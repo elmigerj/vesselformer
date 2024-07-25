@@ -84,11 +84,34 @@ class RelationformerTrainer:
         logger.info(f"Checkpoint saved: {filename}")
 
 def image_graph_collate(batch):
-    images = torch.cat([item[0] for item in batch], 0).contiguous()
-    segs = torch.cat([item[1] for item in batch], 0).contiguous()
-    points = [item[2] for item in batch]
-    edges = [item[3] for item in batch]
-    radii = [item[4] for item in batch]
+    def to_tensor(x):
+        if isinstance(x, torch.Tensor):
+            return x
+        elif isinstance(x, np.ndarray):
+            return torch.from_numpy(x)
+        elif isinstance(x, list):
+            return torch.tensor(x)
+        else:
+            raise ValueError(f"Unsupported type: {type(x)}")
+
+def image_graph_collate(batch):
+    def to_tensor(x):
+        if isinstance(x, torch.Tensor):
+            return x
+        elif isinstance(x, np.ndarray):
+            return torch.from_numpy(x)
+        elif isinstance(x, list):
+            return torch.tensor(x)
+        else:
+            raise ValueError(f"Unsupported type: {type(x)}")
+
+    # Each item in the batch is a tuple
+    images = torch.cat([item[0][0] for item in batch], 0).contiguous()
+    segs = torch.stack([to_tensor(item[1][0]) for item in batch], 0).contiguous()
+    points = [item[2][0] for item in batch]
+    edges = [item[3][0] for item in batch]
+    radii = [item[4][0] for item in batch]
+    
     return [images, segs, points, edges, radii]
 
 def main(args):
