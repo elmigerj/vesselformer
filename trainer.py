@@ -27,7 +27,6 @@ from monai.transforms import (
 )
 import torch
 from torch.nn.utils import clip_grad_norm
-from inference import relation_matcher
 import gc
 
 if TYPE_CHECKING:
