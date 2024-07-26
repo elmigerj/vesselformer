@@ -46,6 +46,8 @@ From: nvidia/cuda:11.3.1-devel-ubuntu20.04
 
     # Install PyTorch and other required packages
     python3.7 -m pip install torch>=2.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu113
+    wget https://github.com/SimpleITK/SimpleITK/releases/download/v2.2.1/SimpleITK-2.2.1-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+    pip install SimpleITK-2.2.1-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
     export SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True
     python3.7 -m pip install \
         loguru==0.5.3 \
@@ -68,7 +70,8 @@ From: nvidia/cuda:11.3.1-devel-ubuntu20.04
         tensorboard \
         openmim
     
-    #mmcv_full==1.3.15 \        
+    # Installing the mmcv packages with mim instead of pip, much faster
+    #mmcv_full==1.3.15 \    
     #mmcv==1.6.0 \
 
     mim install mmcv==1.6.0
@@ -80,8 +83,8 @@ From: nvidia/cuda:11.3.1-devel-ubuntu20.04
     fi
 
     # Install MultiScaleDeformableAttention
-    #cd /vesselformer/models/ops
-    #python3 setup.py build install
+    cd /vesselformer/models/ops
+    python3 setup.py build install
 
     # Add a script to determine CUDA visible devices and run training
     cat << EOF > /usr/local/bin/run_training.sh
