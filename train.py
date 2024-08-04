@@ -62,8 +62,8 @@ def main(rank, args):
         except:
             pass
 
-    torch.backends.cudnn.benchmark = True
-    torch.backends.cudnn.enabled = True
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.enabled = False
     torch.multiprocessing.set_sharing_strategy('file_system')
     # device = torch.device("cuda") if args.device=='cuda' else torch.device("cpu")
     args.distributed = False
@@ -73,7 +73,17 @@ def main(rank, args):
         args.gpu = int(os.environ["LOCAL_RANK"])  # args.gpu = 'cuda:%d' % args.local_rank
         args.world_size = int(os.environ['WORLD_SIZE'])  # igdist.get_world_size()
         print('Running Distributed:', args.distributed, '; GPU:', args.gpu, '; RANK:', args.rank)
-
+    else:
+        print('Running Distributed:', args.distributed)
+        if 'RANK' in os.environ:
+            print('RANK:', os.environ['RANK'])
+        else:
+            print('RANK not set!')
+        if 'WORLD_SIZE' in os.environ:
+            print('WORLD_SIZE:', os.environ['WORLD_SIZE'])
+        else:
+            print('WORLD_SIZE not set!')
+        
     if igdist.get_local_rank() > 0:
         # Ensure that only local rank 0 download the dataset
         # Thus each node will download a copy of the dataset
@@ -181,7 +191,7 @@ def main(rank, args):
         config,
         device,
         args.rank,
-        # distributed=args.distributed,
+        distributed=args.distributed,
     )
     trainer = build_trainer(
         train_loader,
