@@ -8,3 +8,6 @@
 *trained_weights
 *models/ops/*
 checkpoints/*
+build/*
+MultiScaleDeformableAttention*
+*.sif

@@ -12,6 +12,31 @@ from generate_data import prune_patch
 from scipy import ndimage
 from itertools import product
 import pdb
+import networkx as nx
+
+def betti(G, verbose=False):
+    """
+    Compute the first two Betti numbers of a graph.
+    
+    Args:
+    G (networkx.Graph): Input graph
+    verbose (bool): If True, print additional information
+    
+    Returns:
+    list: [b0, b1] where b0 is the 0th Betti number (number of connected components)
+    and b1 is the 1st Betti number (number of holes)
+    """
+    # 0th Betti number (number of connected components)
+    b0 = nx.number_connected_components(G)
+    
+    # 1st Betti number (number of holes)
+    # For a graph, this is equal to the cyclomatic number
+    b1 = len(G.edges()) - len(G.nodes()) + b0
+    
+    if verbose:
+        print(f"Betti numbers: b0 = {b0}, b1 = {b1}")
+    
+    return [b0, b1]
 
 def image_graph_collate(batch):
     images = torch.cat([item_ for item in batch for item_ in item[0]], 0).contiguous()
